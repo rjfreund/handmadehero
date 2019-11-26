@@ -1,8 +1,2 @@
 ﻿  test.cpp
-c:\local\handmadehero\handmadehero\test.cpp(21): warning C4101: 'LargeU': unreferenced local variable
-c:\local\handmadehero\handmadehero\test.cpp(18): warning C4101: 'MediumU': unreferenced local variable
-c:\local\handmadehero\handmadehero\test.cpp(20): warning C4101: 'LargeS': unreferenced local variable
-c:\local\handmadehero\handmadehero\test.cpp(14): warning C4101: 'SmallS': unreferenced local variable
-c:\local\handmadehero\handmadehero\test.cpp(17): warning C4101: 'MediumS': unreferenced local variable
-c:\local\handmadehero\handmadehero\test.cpp(15): warning C4101: 'SmallU': unreferenced local variable
   handmadehero.vcxproj -> C:\local\handmadehero\handmadehero\Debug\handmadehero.exe

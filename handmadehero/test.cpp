@@ -1,29 +1,79 @@
 #include <Windows.h>
 
-void foo(void) {
-	const char *blah = "hello world\n";
-	OutputDebugStringA("hello world\n");
+LRESULT CALLBACK WindowProc(
+	_In_ HWND   hwnd,
+	_In_ UINT   uMsg,
+	_In_ WPARAM wParam,
+	_In_ LPARAM lParam
+) {
+	LRESULT Result = 0;
+
+	switch (uMsg)
+	{
+		case WM_SIZE: {
+			OutputDebugStringA("WM_SIZE");
+		} break;
+		case WM_DESTROY: {
+			OutputDebugStringA("WM_DESTROY");
+		} break;
+		case WM_CLOSE: {
+			OutputDebugStringA("WM_CLOSE");
+		} break;
+		case WM_ACTIVATEAPP: {
+			OutputDebugStringA("WM_ACTIVATEAPP");
+		} break;
+		default: {
+			Result = DefWindowProc(hwnd, uMsg, wParam, lParam);
+		} break;
+	}
+
+	return Result;
 }
 
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
-	LPSTR lpCmdLine,
-	int nCmdShow
+	LPSTR     lpCmdLine,
+	int       nShowCmd
 ) {
-	char SmallS; // 8 bits - 256 different values [-128, 127]
-	char unsigned SmallU; // 8 bits unsigned - 256 different values [0,255]
 
-	short MediumS; // 16 bits - 65536
-	short unsigned MediumU;
+	WNDCLASS wc = { };
+	wc.lpfnWndProc = WindowProc;
+	wc.hInstance = hInstance;
+	wc.lpszClassName = "Sample Window Class";
 
-	int LargeS; // 32 bits - 4 billion
-	int unsigned LargeU;
+	RegisterClass(&wc);
 
-	char unsigned Test;
+	// Create the window.
 
-	Test = 255;
-	Test = Test + 1;
-	
-	foo();
+	HWND hwnd = CreateWindowEx(
+		0,                              // Optional window styles.
+		"Sample Window Class",          // Window class
+		"Learn to Program Windows",		// Window text
+		WS_OVERLAPPEDWINDOW,            // Window style
+
+		// Size and position
+		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+
+		NULL,       // Parent window    
+		NULL,       // Menu
+		hInstance,  // Instance handle
+		NULL        // Additional application data
+	);
+
+	if (hwnd == NULL)
+	{
+		return 0;
+	}
+
+	ShowWindow(hwnd, nShowCmd);
+
+	MSG msg = { };
+	while (GetMessage(&msg, NULL, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	return 0;
 }
