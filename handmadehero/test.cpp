@@ -76,4 +76,6 @@ int CALLBACK WinMain(
 	}
 
 	return 0;
+	
+	//https://youtu.be/4ROiWonnWGk?t=3088
 }
