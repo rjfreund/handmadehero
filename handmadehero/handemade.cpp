@@ -1,6 +1,8 @@
 #include <Windows.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <Xinput.h>
+#pragma comment(lib, "XInput.lib")
 //win32
 
 BITMAPINFO bitmapInfo;
@@ -133,6 +135,35 @@ LRESULT CALLBACK HandleWindowMessage(_In_ HWND window,_In_ UINT message, _In_ WP
 		{
 			OutputDebugStringA("WM_ACTIVATEAPP");
 		} break;
+		case WM_SYSKEYDOWN:
+		case WM_SYSKEYUP:
+		case WM_KEYDOWN:
+		case WM_KEYUP:
+		{
+			uint32_t virtualKeyCode = wParam;
+			bool wasDownPrev = (lParam & (1 << 30)) != 0;
+			bool isDown = (lParam & (1 << 31)) == 0;
+			if (isDown == wasDownPrev) { break; }
+			switch (virtualKeyCode) {
+				case 'W':
+				case 'A':
+				case 'S':
+				case 'D':
+				case 'Q':
+				case 'E':
+				case VK_UP:
+				case VK_DOWN:
+				case VK_LEFT:
+				case VK_RIGHT:				
+				case VK_ESCAPE:
+				case VK_SPACE:
+					TCHAR virtualKeyCodeString[256];
+					sprintf_s(virtualKeyCodeString, "%c", virtualKeyCode);
+					OutputDebugStringA(virtualKeyCodeString);
+					OutputDebugStringA("\n");
+					break;
+			}			
+		} break;
 		default: 
 		{
 			Result = DefWindowProc(window, message, wParam, lParam);
@@ -188,6 +219,34 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLin
 			TranslateMessage(&message);
 			DispatchMessage(&message);
 		}
+
+		for (int i = 0; i < XUSER_MAX_COUNT; i++) {
+			XINPUT_STATE controllerState;			
+			if (XInputGetState(i, &controllerState) != ERROR_SUCCESS) {
+				//controller not plugged in, maybe log error
+				continue;
+			}
+			XINPUT_GAMEPAD *gamepad = &controllerState.Gamepad;
+			bool up = gamepad->wButtons & XINPUT_GAMEPAD_DPAD_UP;
+			bool down = gamepad->wButtons & XINPUT_GAMEPAD_DPAD_DOWN;
+			bool left = gamepad->wButtons & XINPUT_GAMEPAD_DPAD_LEFT;
+			bool right = gamepad->wButtons & XINPUT_GAMEPAD_DPAD_RIGHT;
+			bool start = gamepad->wButtons & XINPUT_GAMEPAD_START;
+			bool back = gamepad->wButtons & XINPUT_GAMEPAD_BACK;
+			bool leftShoulder = gamepad->wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER;
+			bool rightShoulder = gamepad->wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER;
+			bool aButton = gamepad->wButtons & XINPUT_GAMEPAD_A;
+			bool bButton = gamepad->wButtons & XINPUT_GAMEPAD_B;
+			bool xButton = gamepad->wButtons & XINPUT_GAMEPAD_X;
+			bool yButton = gamepad->wButtons & XINPUT_GAMEPAD_Y;
+
+			int16_t stickX = gamepad->sThumbLX;
+			int16_t stickY = gamepad->sThumbLY;
+
+			if (aButton) {}
+			
+		}
+
 		render(xOffset, yOffset);
 		HDC deviceContext = GetDC(window);
 
